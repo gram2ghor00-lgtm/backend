@@ -13,7 +13,7 @@ orderRouter.post('/stats', getOrderStatsController)
 
 // Admin order management
 orderRouter.put('/confirm-order', confirmOrderController)
-orderRouter.delete('/delete', deleteOrderController)
+orderRouter.post('/delete', deleteOrderController)
 
 // Client track order by phone
 orderRouter.post('/track-by-phone', getOrdersByPhoneController)
