@@ -412,6 +412,43 @@ export const confirmOrderController = async (request, response) => {
     }
 };
 
+export const deleteOrderController = async (request, response) => {
+    try {
+        const { orderId } = request.body;
+
+        if (!orderId) {
+            return response.status(400).json({
+                message: "orderId is required",
+                error: true,
+                success: false
+            });
+        }
+
+        const order = await OrderModel.findOneAndDelete({ orderId });
+
+        if (!order) {
+            return response.status(404).json({
+                message: "Order not found",
+                error: true,
+                success: false
+            });
+        }
+
+        return response.json({
+            message: "Order deleted successfully",
+            error: false,
+            success: true
+        });
+
+    } catch (error) {
+        return response.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        });
+    }
+};
+
 export const getOrdersByPhoneController = async (request, response) => {
     try {
         const { phone } = request.body;
