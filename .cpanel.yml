@@ -1,0 +1,6 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/gramghor/api.gram2ghor.com
+    - /bin/cp -R src/. $DEPLOYPATH/src/
+    - /bin/cp package.json $DEPLOYPATH/package.json
