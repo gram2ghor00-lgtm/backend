@@ -56,8 +56,25 @@ app.use("/api/client/category", clientCategoryRouter);
 app.use("/api/admin/auth", authRouter);
 app.use("/api/admin/admins", authMiddleware, adminMgmtRouter);
 
-connectDB().then(() => {
-    app.listen(PORT, () => {
-        console.log("Server is running", PORT)
-    })
-});
+// Start the HTTP server IMMEDIATELY — do NOT gate it behind the DB connection.
+// Passenger/LiteSpeed only forwards requests once listen() is called, so if the DB
+// is slow/unreachable, gating listen() behind it makes EVERY request hang (even "/").
+app.listen(PORT, () => {
+    console.log("Server is running", PORT)
+})
+
+// Connect to MongoDB separately, with retry. A DB outage no longer takes the
+// whole HTTP server down — routes that need the DB will error clearly instead.
+async function initDB(retries = 5) {
+    for (let attempt = 1; attempt <= retries; attempt++) {
+        try {
+            await connectDB()
+            return
+        } catch (err) {
+            console.log(`Mongo connect attempt ${attempt}/${retries} failed:`, err.message)
+            if (attempt < retries) await new Promise(r => setTimeout(r, 5000))
+        }
+    }
+    console.log("Mongo connection failed after retries — HTTP server is up; DB routes will error until Mongo is reachable.")
+}
+initDB()
