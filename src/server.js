@@ -17,6 +17,8 @@ import clientReviewRouter from './routes/clientReview.route.js';
 import clientCategoryRouter from './routes/clientCategory.route.js';
 import authRouter from './routes/auth.route.js';
 import adminMgmtRouter from './routes/adminMgmt.route.js';
+import pixelRouter from './routes/pixel.route.js';
+import clientPixelRouter from './routes/clientPixel.route.js';
 import authMiddleware from './middlewares/auth.middleware.js';
 
 const app = express();
@@ -55,6 +57,8 @@ app.use("/api/client/review", clientReviewRouter);
 app.use("/api/client/category", clientCategoryRouter);
 app.use("/api/admin/auth", authRouter);
 app.use("/api/admin/admins", authMiddleware, adminMgmtRouter);
+app.use("/api/admin/pixel", authMiddleware, pixelRouter);
+app.use("/api/client/pixel", clientPixelRouter);
 
 // Start the HTTP server IMMEDIATELY — do NOT gate it behind the DB connection.
 // Passenger/LiteSpeed only forwards requests once listen() is called, so if the DB
